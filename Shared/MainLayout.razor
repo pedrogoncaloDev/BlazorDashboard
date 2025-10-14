@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components
+@inherits LayoutComponentBase
+@implements IDisposable
+
+@inject ThemeService ThemeService
+
+<div class="page @(ThemeService.IsDarkMode ? "dark-mode" : "light-mode")">
+    @Body
+</div>
+
+<style>
+    .page.light-mode {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .page.dark-mode {
+        background-color: #1e1e1e;
+        color: #f0f0f0;
+        transition: background-color 0.3s, color 0.3s;
+    }
+</style>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += StateHasChanged;
+        base.OnInitialized();
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= StateHasChanged;
+    }
+}

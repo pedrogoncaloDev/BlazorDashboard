@@ -1,0 +1,401 @@
+@page "/"
+@using System.Globalization
+@inject IJSRuntime JSRuntime
+@inject ThemeService ThemeService
+@implements IDisposable
+
+<button class="mode-toggle" @onclick="ToggleDarkMode">
+    @(ThemeService.IsDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode")
+</button>
+
+<div class="dashboard @(ThemeService.IsDarkMode ? "dark-mode" : "light-mode")">
+    <!-- Grid de Métricas Principais -->
+    <div class="stats-grid">
+        <div class="stat-card revenue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Receita Total</h3>
+                <h2>R$ 156.240</h2>
+                <span class="stat-trend positive">+12.5%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card users">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <h3>Usuários Ativos</h3>
+                <h2>2.847</h2>
+                <span class="stat-trend positive">+8.3%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card orders">
+            <div class="stat-icon">📦</div>
+            <div class="stat-content">
+                <h3>Pedidos</h3>
+                <h2>324</h2>
+                <span class="stat-trend positive">+5.2%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card conversion">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-content">
+                <h3>Taxa de Conversão</h3>
+                <h2>3.8%</h2>
+                <span class="stat-trend negative">-0.4%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Primeira Linha de Gráficos -->
+    <div class="charts-row">
+        <!-- Gráfico de Linha - Evolução de Vendas -->
+        <div class="chart-card large">
+            <div class="chart-header">
+                <h3>📈 Evolução de Vendas - Últimos 12 Meses</h3>
+            </div>
+            <div id="lineChart" style="width: 100%; height: 350px;"></div>
+        </div>
+    </div>
+
+    <!-- Segunda Linha de Gráficos -->
+    <div class="charts-row">
+        <!-- Gráfico de Pizza - Categorias -->
+        <div class="chart-card medium">
+            <h3>🍕 Distribuição por Categoria</h3>
+            <div id="pieChart" style="width: 100%; height: 300px;"></div>
+        </div>
+
+        <!-- Gráfico de Barras - Produtos Mais Vendidos -->
+        <div class="chart-card medium">
+            <h3>🏆 Top 5 Produtos Mais Vendidos</h3>
+            <div id="barChart" style="width: 100%; height: 300px;"></div>
+        </div>
+    </div>
+
+    <!-- Terceira Linha de Gráficos -->
+    <div class="charts-row">
+        <!-- Gráfico de Área - Tráfego do Site -->
+        <div class="chart-card large">
+            <h3>🌐 Tráfego do Site - Últimos 30 Dias</h3>
+            <div id="areaChart" style="width: 100%; height: 300px;"></div>
+        </div>
+    </div>
+
+    <!-- Métricas Secundárias -->
+    <div class="secondary-stats">
+        <div class="secondary-card">
+            <h4>⏱️ Tempo Médio de Sessão</h4>
+            <div class="secondary-value">4m 32s</div>
+        </div>
+        <div class="secondary-card">
+            <h4>🚫 Taxa de Rejeição</h4>
+            <div class="secondary-value">42.3%</div>
+        </div>
+        <div class="secondary-card">
+            <h4>📦 Pedidos por Hora</h4>
+            <div class="secondary-value">18.5</div>
+        </div>
+        <div class="secondary-card">
+            <h4>🎫 Ticket Médio</h4>
+            <div class="secondary-value">R$ 482,15</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _isInitialized = false;
+
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += OnThemeChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isInitialized = true;
+            await InitializeCharts();
+        }
+    }
+
+    private void ToggleDarkMode()
+    {
+        ThemeService.ToggleTheme();
+    }
+
+    private async void OnThemeChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+        
+        if (_isInitialized)
+        {
+            await UpdateChartsTheme();
+        }
+    }
+
+    private async Task InitializeCharts()
+    {
+        try
+        {
+            // Aguarda um pouco para garantir que o DOM está totalmente renderizado
+            await Task.Delay(100);
+            await JSRuntime.InvokeVoidAsync("initializeDashboardCharts", GetChartOptions());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao inicializar gráficos: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateChartsTheme()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("updateDashboardChartsTheme", GetChartOptions());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao atualizar tema dos gráficos: {ex.Message}");
+        }
+    }
+
+    private object GetChartOptions()
+    {
+        var textColor = ThemeService.IsDarkMode ? "#f0f0f0" : "#2c3e50";
+        var backgroundColor = ThemeService.IsDarkMode ? "transparent" : "transparent";
+        var gridColor = ThemeService.IsDarkMode ? "#444" : "#eee";
+
+        // Gráfico de Linha - Evolução de Vendas
+        var lineChartOption = new
+        {
+            backgroundColor = backgroundColor,
+            title = new { text = "Evolução de Vendas", textStyle = new { color = textColor } },
+            tooltip = new { 
+                trigger = "axis", 
+                backgroundColor = ThemeService.IsDarkMode ? "#333" : "#fff",
+                textStyle = new { color = textColor } 
+            },
+            legend = new { 
+                data = new[] { "Vendas", "Meta" },
+                textStyle = new { color = textColor }
+            },
+            grid = new { 
+                left = "3%", 
+                right = "4%", 
+                bottom = "3%", 
+                containLabel = true,
+                borderColor = gridColor
+            },
+            toolbox = new { feature = new { saveAsImage = new { } } },
+            xAxis = new
+            {
+                type = "category",
+                boundaryGap = false,
+                data = new[] { "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" },
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } }
+            },
+            yAxis = new { 
+                type = "value",
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } },
+                splitLine = new { lineStyle = new { color = gridColor, opacity = 0.3 } }
+            },
+            series = new[]
+            {
+                new
+                {
+                    name = "Vendas",
+                    type = "line",
+                    data = new[] { 12000, 15000, 18000, 22000, 25000, 28000, 32000, 35000, 38000, 42000, 45000, 48000 },
+                    itemStyle = new { color = "#3498db" },
+                    lineStyle = new { color = "#3498db" },
+                    smooth = true
+                },
+                new
+                {
+                    name = "Meta",
+                    type = "line",
+                    data = new[] { 10000, 13000, 17000, 21000, 25000, 29000, 33000, 37000, 41000, 45000, 49000, 53000 },
+                    itemStyle = new { color = "#e74c3c" },
+                    lineStyle = new { color = "#e74c3c" },
+                    smooth = true
+                }
+            }
+        };
+
+        // Gráfico de Pizza - Categorias
+        var pieChartOption = new
+        {
+            backgroundColor = backgroundColor,
+            title = new { 
+                text = "Distribuição por Categoria", 
+                left = "center",
+                textStyle = new { color = textColor }
+            },
+            tooltip = new { 
+                trigger = "item",
+                backgroundColor = ThemeService.IsDarkMode ? "#333" : "#fff",
+                textStyle = new { color = textColor }
+            },
+            legend = new { 
+                orient = "vertical", 
+                left = "left",
+                textStyle = new { color = textColor }
+            },
+            series = new[]
+            {
+                new
+                {
+                    name = "Categorias",
+                    type = "pie",
+                    radius = "50%",
+                    data = new[]
+                    {
+                        new { value = 35, name = "Eletrônicos", itemStyle = new { color = "#3498db" } },
+                        new { value = 25, name = "Roupas", itemStyle = new { color = "#e74c3c" } },
+                        new { value = 20, name = "Casa", itemStyle = new { color = "#2ecc71" } },
+                        new { value = 12, name = "Esportes", itemStyle = new { color = "#f39c12" } },
+                        new { value = 8, name = "Livros", itemStyle = new { color = "#9b59b6" } }
+                    },
+                    emphasis = new
+                    {
+                        itemStyle = new
+                        {
+                            shadowBlur = 10,
+                            shadowOffsetX = 0,
+                            shadowColor = "rgba(0, 0, 0, 0.5)"
+                        }
+                    },
+                    label = new { 
+                        color = textColor,
+                        formatter = "{b}: {c}%"
+                    }
+                }
+            }
+        };
+
+        // Gráfico de Barras - Produtos Mais Vendidos
+        var barChartOption = new
+        {
+            backgroundColor = backgroundColor,
+            title = new { 
+                text = "Produtos Mais Vendidos",
+                textStyle = new { color = textColor }
+            },
+            tooltip = new { 
+                trigger = "axis", 
+                axisPointer = new { type = "shadow" },
+                backgroundColor = ThemeService.IsDarkMode ? "#333" : "#fff",
+                textStyle = new { color = textColor }
+            },
+            grid = new { 
+                left = "3%", 
+                right = "4%", 
+                bottom = "3%", 
+                containLabel = true,
+                borderColor = gridColor
+            },
+            xAxis = new
+            {
+                type = "value",
+                boundaryGap = new[] { 0, 0.01 },
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } },
+                splitLine = new { lineStyle = new { color = gridColor, opacity = 0.3 } }
+            },
+            yAxis = new
+            {
+                type = "category",
+                data = new[] { "Fone Bluetooth", "Smart TV", "Tênis Nike", "Notebook Dell", "iPhone 15" },
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } }
+            },
+            series = new[]
+            {
+                new
+                {
+                    name = "Quantidade",
+                    type = "bar",
+                    data = new[] { 980, 1320, 1560, 1890, 2450 },
+                    itemStyle = new { color = "#3498db" },
+                    label = new { 
+                        show = true, 
+                        position = "right",
+                        color = textColor 
+                    }
+                }
+            }
+        };
+
+        // Gráfico de Área - Tráfego do Site
+        var areaChartOption = new
+        {
+            backgroundColor = backgroundColor,
+            title = new { 
+                text = "Tráfego do Site",
+                textStyle = new { color = textColor }
+            },
+            tooltip = new { 
+                trigger = "axis",
+                backgroundColor = ThemeService.IsDarkMode ? "#333" : "#fff",
+                textStyle = new { color = textColor }
+            },
+            legend = new { 
+                data = new[] { "Visitantes" },
+                textStyle = new { color = textColor }
+            },
+            grid = new { 
+                left = "3%", 
+                right = "4%", 
+                bottom = "3%", 
+                containLabel = true,
+                borderColor = gridColor
+            },
+            xAxis = new
+            {
+                type = "category",
+                boundaryGap = false,
+                data = new[] { "1", "5", "10", "15", "20", "25", "30" },
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } }
+            },
+            yAxis = new { 
+                type = "value",
+                axisLabel = new { color = textColor },
+                axisLine = new { lineStyle = new { color = gridColor } },
+                splitLine = new { lineStyle = new { color = gridColor, opacity = 0.3 } }
+            },
+            series = new[]
+            {
+                new
+                {
+                    name = "Visitantes",
+                    type = "line",
+                    stack = "Total",
+                    data = new[] { 1200, 1800, 2200, 1900, 2500, 2800, 3200 },
+                    itemStyle = new { color = "#3498db" },
+                    lineStyle = new { color = "#3498db" },
+                    areaStyle = new { color = "rgba(52, 152, 219, 0.3)" },
+                    smooth = true
+                }
+            }
+        };
+
+        return new
+        {
+            lineChart = lineChartOption,
+            pieChart = pieChartOption,
+            barChart = barChartOption,
+            areaChart = areaChartOption
+        };
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= OnThemeChanged;
+    }
+}

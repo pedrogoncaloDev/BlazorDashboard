@@ -1,0 +1,16 @@
+﻿<CascadingValue Value="IsDarkMode">
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <p>Sorry, there's nothing at this address.</p>
+        </NotFound>
+    </Router>
+</CascadingValue>
+
+@code {
+    private bool IsDarkMode = false;
+
+    public void ToggleDarkMode() => IsDarkMode = !IsDarkMode;
+}
