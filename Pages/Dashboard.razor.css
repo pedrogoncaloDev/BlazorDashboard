@@ -74,21 +74,29 @@
     justify-content: center;
     border-radius: 50%;
     background: #f8f9fa;
+    background: transparent;
 }
 
 .stat-content h3 {
     margin: 0 0 5px 0;
-    color: #666;
     font-size: 14px;
     font-weight: 500;
 }
 
 .stat-content h2 {
     margin: 0 0 5px 0;
-    color: #2c3e50;
     font-size: 28px;
     font-weight: 700;
 }
+
+.dashboard.dark-mode .stat-content h3 {
+    color: #fff;
+}
+
+.dashboard.dark-mode .stat-content h2 {
+    color: rgb(41, 128, 185)
+}
+
 
 .stat-trend {
     font-size: 12px;
@@ -171,10 +179,17 @@
 
 .secondary-card h4 {
     margin: 0 0 10px 0;
-    color: #666;
     font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+.dashboard.dark-mode .secondary-card h4 {
+    color: #fff;
+}
+
+.dashboard.dark-mode .secondary-value{
+    color: rgb(41, 128, 185);
 }
 
 .secondary-value {
