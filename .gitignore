@@ -1,0 +1,94 @@
+# ================================
+# .NET / Blazor Project
+# ================================
+
+## Build e binários
+bin/
+obj/
+out/
+Debug/
+Release/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+## Arquivos de publicação
+*.publish.xml
+*.pubxml
+*.pubxml.user
+publish/
+wwwroot/dist/
+wwwroot/node_modules/
+wwwroot/lib/
+
+## Configurações locais e cache
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+.vscode/
+.idea/
+*.swp
+*.bak
+*.tmp
+
+## Logs e dumps
+*.log
+*.tlog
+*.dmp
+
+## Dependências JS/Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Arquivos temporários e pacotes
+*.tmp
+*.temp
+*.pid
+*.seed
+*.orig
+*.rej
+*.scc
+*.Cache/
+*.config.backup
+*.lock.json
+*.pdb
+
+## Arquivos do Visual Studio / Rider
+.vs/
+*.vcxproj.user
+*.rsuser
+*.ncrunchsolution
+_ReSharper*/
+*_ReSharper.Caches/
+
+## Arquivos de build do Blazor
+wwwroot/_framework/
+wwwroot/css/app.css.map
+wwwroot/js/*.map
+
+## Secretos e ambiente local
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+.env
+.env.*
+
+## Testes
+TestResults/
+*.coverage
+*.coveragexml
+*.testresults
+
+## Backup do Visual Studio Code
+.history/
