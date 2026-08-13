@@ -1,8 +1,20 @@
 let dashboardCharts = {};
+let lastChartsData = null;
 
-function initializeDashboardCharts(theme) {
+function initializeDashboardCharts(theme, data) {
     if (!window.echarts) {
         console.error("❌ ECharts não está carregado.");
+        return;
+    }
+
+    if (data) {
+        lastChartsData = data;
+    } else {
+        data = lastChartsData;
+    }
+
+    if (!data) {
+        console.error("❌ Nenhum dado de gráfico disponível.");
         return;
     }
 
@@ -21,11 +33,11 @@ function initializeDashboardCharts(theme) {
         title: { textStyle: { color: colors.text } },
         tooltip: { trigger: "axis" },
         legend: { data: ["Vendas", "Meta"], textStyle: { color: colors.text } },
-        xAxis: { type: "category", boundaryGap: false, data: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"], axisLabel: { color: colors.text } },
+        xAxis: { type: "category", boundaryGap: false, data: data.lineChart.months, axisLabel: { color: colors.text } },
         yAxis: { type: "value", axisLabel: { color: colors.text }, splitLine: { lineStyle: { color: colors.grid } } },
         series: [
-            { name: "Vendas", type: "line", data: [12000,15000,18000,22000,25000,28000,32000,35000,38000,42000,45000,48000], itemStyle: { color: "#3498db" }, smooth: true },
-            { name: "Meta", type: "line", data: [10000,13000,17000,21000,25000,29000,33000,37000,41000,45000,49000,53000], itemStyle: { color: "#e74c3c" }, smooth: true }
+            { name: "Vendas", type: "line", data: data.lineChart.vendas, itemStyle: { color: "#3498db" }, smooth: true },
+            { name: "Meta", type: "line", data: data.lineChart.meta, itemStyle: { color: "#e74c3c" }, smooth: true }
         ]
     };
 
@@ -37,13 +49,7 @@ function initializeDashboardCharts(theme) {
         series: [{
             type: "pie",
             radius: "50%",
-            data: [
-                { value: 35, name: "Eletrônicos" },
-                { value: 25, name: "Roupas" },
-                { value: 20, name: "Casa" },
-                { value: 12, name: "Esportes" },
-                { value: 8, name: "Livros" }
-            ]
+            data: data.pieChart
         }]
     };
 
@@ -51,18 +57,18 @@ function initializeDashboardCharts(theme) {
         backgroundColor: colors.bg,
         title: { textStyle: { color: colors.text } },
         xAxis: { type: "value", axisLabel: { color: colors.text }, splitLine: { lineStyle: { color: colors.grid } } },
-        yAxis: { type: "category", data: ["Fone Bluetooth", "Smart TV", "Tênis Nike", "Notebook Dell", "iPhone 15"], axisLabel: { color: colors.text } },
-        series: [{ type: "bar", data: [980, 1320, 1560, 1890, 2450], itemStyle: { color: "#3498db" } }]
+        yAxis: { type: "category", data: data.barChart.categories, axisLabel: { color: colors.text } },
+        series: [{ type: "bar", data: data.barChart.values, itemStyle: { color: "#3498db" } }]
     };
 
     const areaOption = {
         backgroundColor: colors.bg,
         title: { textStyle: { color: colors.text } },
-        xAxis: { type: "category", boundaryGap: false, data: ["1", "5", "10", "15", "20", "25", "30"], axisLabel: { color: colors.text } },
+        xAxis: { type: "category", boundaryGap: false, data: data.areaChart.days, axisLabel: { color: colors.text } },
         yAxis: { type: "value", axisLabel: { color: colors.text }, splitLine: { lineStyle: { color: colors.grid } } },
         series: [{
             type: "line",
-            data: [1200,1800,2200,1900,2500,2800,3200],
+            data: data.areaChart.values,
             areaStyle: { color: "rgba(52,152,219,0.3)" },
             itemStyle: { color: "#3498db" },
             smooth: true
@@ -85,7 +91,7 @@ function initializeDashboardCharts(theme) {
 }
 
 function updateDashboardChartsTheme(theme) {
-    initializeDashboardCharts(theme);
+    initializeDashboardCharts(theme, null);
 }
 
 function isEChartsLoaded() {

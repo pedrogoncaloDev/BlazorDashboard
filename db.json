@@ -1,0 +1,34 @@
+{
+  "stats": [
+    { "key": "revenue", "icon": "💰", "label": "Receita Total", "value": "R$ 156.240", "trend": "+12.5%", "trendType": "positive" },
+    { "key": "users", "icon": "👥", "label": "Usuários Ativos", "value": "2.847", "trend": "+8.3%", "trendType": "positive" },
+    { "key": "orders", "icon": "📦", "label": "Pedidos", "value": "324", "trend": "+5.2%", "trendType": "positive" },
+    { "key": "conversion", "icon": "🎯", "label": "Taxa de Conversão", "value": "3.8%", "trend": "-0.4%", "trendType": "negative" }
+  ],
+  "secondaryStats": [
+    { "icon": "⏱️", "label": "Tempo Médio de Sessão", "value": "4m 32s" },
+    { "icon": "🚫", "label": "Taxa de Rejeição", "value": "42.3%" },
+    { "icon": "📦", "label": "Pedidos por Hora", "value": "18.5" },
+    { "icon": "🎫", "label": "Ticket Médio", "value": "R$ 482,15" }
+  ],
+  "lineChart": {
+    "months": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+    "vendas": [12000, 15000, 18000, 22000, 25000, 28000, 32000, 35000, 38000, 42000, 45000, 48000],
+    "meta": [10000, 13000, 17000, 21000, 25000, 29000, 33000, 37000, 41000, 45000, 49000, 53000]
+  },
+  "pieChart": [
+    { "value": 35, "name": "Eletrônicos" },
+    { "value": 25, "name": "Roupas" },
+    { "value": 20, "name": "Casa" },
+    { "value": 12, "name": "Esportes" },
+    { "value": 8, "name": "Livros" }
+  ],
+  "barChart": {
+    "categories": ["Fone Bluetooth", "Smart TV", "Tênis Nike", "Notebook Dell", "iPhone 15"],
+    "values": [980, 1320, 1560, 1890, 2450]
+  },
+  "areaChart": {
+    "days": ["1", "5", "10", "15", "20", "25", "30"],
+    "values": [1200, 1800, 2200, 1900, 2500, 2800, 3200]
+  }
+}

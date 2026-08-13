@@ -8,6 +8,7 @@
     <PackageReference Include="AntDesign.Charts" Version="0.8.0" />
     <PackageReference Include="ApexCharts.Blazor" Version="0.9.6-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" />
     <PackageReference Include="MudBlazor" Version="8.13.0" />
   </ItemGroup>

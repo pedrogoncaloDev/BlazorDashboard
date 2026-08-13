@@ -1,0 +1,10 @@
+{
+  "name": "blazordashboard-fake-api",
+  "private": true,
+  "scripts": {
+    "api": "json-server --watch db.json --port 3001"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  }
+}
